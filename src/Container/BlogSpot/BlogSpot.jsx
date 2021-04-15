@@ -1,13 +1,14 @@
 import React, {Component} from 'react';
 import './BlogSpot.css';
 import Post from "../../Container/BlogSpot/Post";
+import API from "../../Services/index"
 
 class BlogPost extends Component{
 
     state = {
-        listArtikel: [],
-        insertArtikel: {
-            userId: 1,
+        listArtikel: [],                            //var array untuk menyimpan data APi
+        insertArtikel: {                            //var yang digunakan menampung semenara data yang ingin dimasukkan 
+            userId: 1,                              //merupakan kolom yang ada didalam listArtikel.json
             id: 1,
             title: "",
             body: ""
@@ -15,11 +16,9 @@ class BlogPost extends Component{
     }
     
     ambilDataDariServerAPI = () =>{
-        fetch('http://localhost:3001/posts?_sort=id&_order=desc')
-        .then(response => response.json())
-        .then(jsonHasilAmbilDariAPI => {
+        API.getNewsBlog().then(result => {
             this.setState({
-                listArtikel: jsonHasilAmbilDariAPI
+                listArtikel: result
             })
         })
     }
@@ -28,11 +27,11 @@ class BlogPost extends Component{
         this.ambilDataDariServerAPI()
     }
 
-    handleHapusArtikel = (data) => {
-        fetch(`http://localhost:3001/posts/${data}`, {method: 'DELETE'})
-        .then(res => {
-            this.ambilDataDariServerAPI()
-        })
+    handleHapusArtikel = (data) => {                //fungsi untuk meng-handle tombol hapus
+        API.deleteNewsBlog(data)
+            .then((response) => {
+                this.ambilDataDariServerAPI();
+            })
     }
 
     handleTambahArtikel = (event) => {
@@ -44,33 +43,11 @@ class BlogPost extends Component{
             insertArtikel : formInsertArtikel
         })
     }
-
-    handleTombolSimpan = () => {
-        fetch('http://localhost:3001/posts', {
-            method: 'post',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(this.state.insertArtikel)
-        })
-        
-        .then( (Response ) => {
-                this.ambilDataDariServerAPI();
-            });
-    }
     
     handleTombolSimpan = () => {                // fungsi untuk meng-handle tombol simpan
-        fetch('http://localhost:3001/posts', {
-            method: 'post',                     //method POST untuk input/insert data
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(this.state.insertArtikel)  // kirimkan ke body request untuk data artikel yang akan ditambahkan (insert)
-        })
-            .then( (Response ) => {
-                this.ambilDataDariServerAPI();              // reload / refresh data
+        API.postNewsBlog(this.state.insertArtikel)
+            .then( (response) => {
+                this.ambilDataDariServerAPI();
             });
     }
 

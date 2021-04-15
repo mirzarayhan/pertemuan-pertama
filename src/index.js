@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import * as serviceWorker from "register-service-worker";
 import BlogSpot from './Container/BlogSpot/BlogSpot'
@@ -15,5 +16,6 @@ import App from './App';
 
 ReactDOM.render(
    <BlogSpot />,
-document.getElementById('root'));
+document.getElementById('content'));
+reportWebVitals();
 serviceWorker.unregister();
